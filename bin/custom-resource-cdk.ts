@@ -10,9 +10,7 @@ import { Construct } from 'constructs';
 
 const app = new cdk.App();
 
-// new MyAmazingPipelineStack(app, 'MyAmazingPipeline');
-
-// one needs to manually set the Provider, despite what the documentation says
+// One needs to manually set the Provider, despite what the documentation says
 // new MyGitHubActionRole(app, 'MyGitHubActionRole', {
 //   env: {
 //     account: config['aws.deployment.accountId']
@@ -28,7 +26,7 @@ class MyStage extends cdk.Stage {
 }
 
 const pipeline = new GitHubWorkflow(app, 'Pipeline', {
-  publishAssetsAuthRegion: 'eu-west-1',
+  publishAssetsAuthRegion: config['aws.region'],
   synth: new ShellStep('Build', {    
     commands: [
       'npm install',
@@ -39,41 +37,13 @@ const pipeline = new GitHubWorkflow(app, 'Pipeline', {
   awsCreds: AwsCredentials.fromOpenIdConnect({
     gitHubActionRoleArn: config['aws.github-role.arn'],
   }),
-  // primaryOutputDirectory: './cdk.out',
 });
 
-// Build the stages
-// const betaStage = new MyStage(app, 'Beta', { env: BETA_ENV });
-// const prodStage = new MyStage(app, 'Prod', { env: PROD_ENV });
-
-// pipeline.addStage(new MyStage(app, 'Account1', {
-//   env: {
-//     account: config['aws.deployment.accountId'], 
-//     region: 'eu-west-1'
-//   }
-// }));
-
-pipeline.addStage(new MyStage(app, 'Account2', {
+const prodStage = new MyStage(app, 'Prod', {
   env: {
-    account: '682444753419', 
-    region: 'eu-west-1'
+    account: config['aws.deployment.accountId'], 
+    region: config['aws.region']
   }
-}));
+});
 
-// pipeline.addStage(new MyStage(app, 'Account3', {
-//   env: {
-//     account: '656811865361', 
-//     region: 'eu-west-1'
-//   }
-// }));
-
-// Add the stages for sequential build - earlier stages failing will stop later ones:
-// pipeline.addStage(betaStage);
-// pipeline.addStage(prodStage);
-// pipeline.addStage(prodStage);
-// pipeline.addStage(prodStage);
-
-// OR add the stages for parallel building of multiple stages with a Wave:
-// const wave = pipeline.addWave('Wave');
-// wave.addStage(betaStage);
-// wave.addStage(prodStage);
+pipeline.addStage(prodStage);
