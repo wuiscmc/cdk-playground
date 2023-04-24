@@ -1,0 +1,4 @@
+{
+  "aws.deployment.accountId": "552193173995",
+  "aws.github-role.arn": "arn:aws:iam::552193173995:role/GitHubActionRole"
+}

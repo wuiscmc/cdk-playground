@@ -2,24 +2,57 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { CustomResourceCdkStack } from '../lib/custom-resource-cdk-stack';
-import { MyAmazingPipelineStack } from '../lib/pipeline-stack';
+import { MyGitHubActionRole } from '../lib/github-action-role-stack';
+import config from '../config.json';
+import { AwsCredentials, GitHubWorkflow } from 'cdk-pipelines-github';
+import { ShellStep } from 'aws-cdk-lib/pipelines';
+import { Construct } from 'constructs';
 
 const app = new cdk.App();
 
-const pipeline = new MyAmazingPipelineStack(app, 'MyAmazingPipeline');
+// new MyAmazingPipelineStack(app, 'MyAmazingPipeline');
 
-// new CustomResourceCdkStack(pipeline, 'CustomResourceCdkStack', {
-//   /* If you don't specify 'env', this stack will be environment-agnostic.
-//    * Account/Region-dependent features and context lookups will not work,
-//    * but a single synthesized template can be deployed anywhere. */
-
-//   /* Uncomment the next line to specialize this stack for the AWS Account
-//    * and Region that are implied by the current CLI configuration. */
-//   // env: { account: process.env.CDK_DEFAULT_ACCOUNT, region: process.env.CDK_DEFAULT_REGION },
-
-//   /* Uncomment the next line if you know exactly what Account and Region you
-//    * want to deploy the stack to. */
-//   // env: { account: '123456789012', region: 'us-east-1' },
-
-//   /* For more information, see https://docs.aws.amazon.com/cdk/latest/guide/environments.html */
+// new MyGitHubActionRole(app, 'MyGitHubActionRole', {
+//   env: {
+//     account: config['aws.deployment.accountId']
+//   }
 // });
+
+class MyStage extends cdk.Stage {
+  constructor(scope: Construct, id: string, props?: cdk.StageProps) {
+    super(scope, id, props);
+
+    new CustomResourceCdkStack(this, 'test-custom-resource', props);
+    // const dbStack = new DatabaseStack(this, 'Database');
+    // new ComputeStack(this, 'Compute', {
+    //   table: dbStack.table,
+    // });
+  }
+}
+
+
+const pipeline = new GitHubWorkflow(app, 'Pipeline', {
+  synth: new ShellStep('Build', {
+    commands: [
+      'npx cdk synth',
+    ],
+  }),
+  awsCreds: AwsCredentials.fromOpenIdConnect({
+    gitHubActionRoleArn: config['aws.github-role.arn'],
+  }),
+  // primaryOutputDirectory: './cdk.out',
+});
+
+// Build the stages
+// const betaStage = new MyStage(app, 'Beta', { env: BETA_ENV });
+// const prodStage = new MyStage(app, 'Prod', { env: PROD_ENV });
+const prodStage = new MyStage(app, 'Prod', { env: { account: config['aws.deployment.accountId'], region: 'eu-west-1' }});
+
+// Add the stages for sequential build - earlier stages failing will stop later ones:
+// pipeline.addStage(betaStage);
+pipeline.addStage(prodStage);
+
+// OR add the stages for parallel building of multiple stages with a Wave:
+// const wave = pipeline.addWave('Wave');
+// wave.addStage(betaStage);
+// wave.addStage(prodStage);
