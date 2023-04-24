@@ -35,6 +35,7 @@ const pipeline = new GitHubWorkflow(app, 'Pipeline', {
   synth: new ShellStep('Build', {
     commands: [
       'yarn install',
+      'yarn build',
       'npx cdk synth',
     ],
   }),
