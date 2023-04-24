@@ -20,7 +20,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       - name: Build
-        run: npx cdk synth
+        run: |-
+          yarn install
+          yarn build
+          npx cdk synth
       - name: Upload cdk.out
         uses: actions/upload-artifact@v3
         with:
