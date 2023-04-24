@@ -34,7 +34,7 @@ class MyStage extends cdk.Stage {
 const pipeline = new GitHubWorkflow(app, 'Pipeline', {
   synth: new ShellStep('Build', {
     commands: [
-      'npm i',
+      'yarn install',
       'npx cdk synth',
     ],
   }),
