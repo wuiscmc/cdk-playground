@@ -45,12 +45,13 @@ const pipeline = new GitHubWorkflow(app, 'Pipeline', {
 // Build the stages
 // const betaStage = new MyStage(app, 'Beta', { env: BETA_ENV });
 // const prodStage = new MyStage(app, 'Prod', { env: PROD_ENV });
-pipeline.addStage(new MyStage(app, 'Account1', {
-  env: {
-    account: config['aws.deployment.accountId'], 
-    region: 'eu-west-1'
-  }
-}));
+
+// pipeline.addStage(new MyStage(app, 'Account1', {
+//   env: {
+//     account: config['aws.deployment.accountId'], 
+//     region: 'eu-west-1'
+//   }
+// }));
 
 pipeline.addStage(new MyStage(app, 'Account2', {
   env: {
@@ -59,12 +60,12 @@ pipeline.addStage(new MyStage(app, 'Account2', {
   }
 }));
 
-pipeline.addStage(new MyStage(app, 'Account3', {
-  env: {
-    account: '656811865361', 
-    region: 'eu-west-1'
-  }
-}));
+// pipeline.addStage(new MyStage(app, 'Account3', {
+//   env: {
+//     account: '656811865361', 
+//     region: 'eu-west-1'
+//   }
+// }));
 
 // Add the stages for sequential build - earlier stages failing will stop later ones:
 // pipeline.addStage(betaStage);
