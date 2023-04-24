@@ -12,6 +12,7 @@ const app = new cdk.App();
 
 // new MyAmazingPipelineStack(app, 'MyAmazingPipeline');
 
+// one needs to manually set the Provider, despite what the documentation says
 // new MyGitHubActionRole(app, 'MyGitHubActionRole', {
 //   env: {
 //     account: config['aws.deployment.accountId']
@@ -44,11 +45,32 @@ const pipeline = new GitHubWorkflow(app, 'Pipeline', {
 // Build the stages
 // const betaStage = new MyStage(app, 'Beta', { env: BETA_ENV });
 // const prodStage = new MyStage(app, 'Prod', { env: PROD_ENV });
-const prodStage = new MyStage(app, 'Prod', { env: { account: config['aws.deployment.accountId'], region: 'eu-west-1' }});
+pipeline.addStage(new MyStage(app, 'Account1', {
+  env: {
+    account: config['aws.deployment.accountId'], 
+    region: 'eu-west-1'
+  }
+}));
+
+pipeline.addStage(new MyStage(app, 'Account2', {
+  env: {
+    account: '682444753419', 
+    region: 'eu-west-1'
+  }
+}));
+
+pipeline.addStage(new MyStage(app, 'Account3', {
+  env: {
+    account: '656811865361', 
+    region: 'eu-west-1'
+  }
+}));
 
 // Add the stages for sequential build - earlier stages failing will stop later ones:
 // pipeline.addStage(betaStage);
-pipeline.addStage(prodStage);
+// pipeline.addStage(prodStage);
+// pipeline.addStage(prodStage);
+// pipeline.addStage(prodStage);
 
 // OR add the stages for parallel building of multiple stages with a Wave:
 // const wave = pipeline.addWave('Wave');
