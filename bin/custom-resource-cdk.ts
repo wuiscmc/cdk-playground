@@ -23,16 +23,12 @@ class MyStage extends cdk.Stage {
     super(scope, id, props);
 
     new CustomResourceCdkStack(this, 'test-custom-resource', props);
-    // const dbStack = new DatabaseStack(this, 'Database');
-    // new ComputeStack(this, 'Compute', {
-    //   table: dbStack.table,
-    // });
   }
 }
 
-
 const pipeline = new GitHubWorkflow(app, 'Pipeline', {
-  synth: new ShellStep('Build', {
+  // publishAssetsAuthRegion: 'eu-west-1',
+  synth: new ShellStep('Build', {    
     commands: [
       'npm install',
       'npm run build',
