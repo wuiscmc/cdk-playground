@@ -48,13 +48,12 @@ jobs:
       - name: Install
         run: npm install --no-save cdk-assets
       - name: Authenticate Via OIDC Role
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-region: us-west-2
+          aws-region: eu-west-1
           role-duration-seconds: 1800
           role-skip-session-tagging: true
           role-to-assume: arn:aws:iam::552193173995:role/GitHubActionRole
-          role-session-name: role-session
       - id: Publish
         name: Publish Assets-FileAsset1
         run: /bin/bash ./cdk.out/publish-Assets-FileAsset1-step.sh
@@ -77,13 +76,12 @@ jobs:
       - name: Install
         run: npm install --no-save cdk-assets
       - name: Authenticate Via OIDC Role
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-region: us-west-2
+          aws-region: eu-west-1
           role-duration-seconds: 1800
           role-skip-session-tagging: true
           role-to-assume: arn:aws:iam::552193173995:role/GitHubActionRole
-          role-session-name: role-session
       - id: Publish
         name: Publish Assets-FileAsset2
         run: /bin/bash ./cdk.out/publish-Assets-FileAsset2-step.sh
@@ -106,13 +104,12 @@ jobs:
       - name: Install
         run: npm install --no-save cdk-assets
       - name: Authenticate Via OIDC Role
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-region: us-west-2
+          aws-region: eu-west-1
           role-duration-seconds: 1800
           role-skip-session-tagging: true
           role-to-assume: arn:aws:iam::552193173995:role/GitHubActionRole
-          role-session-name: role-session
       - id: Publish
         name: Publish Assets-FileAsset3
         run: /bin/bash ./cdk.out/publish-Assets-FileAsset3-step.sh
@@ -135,13 +132,12 @@ jobs:
       - name: Install
         run: npm install --no-save cdk-assets
       - name: Authenticate Via OIDC Role
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
-          aws-region: us-west-2
+          aws-region: eu-west-1
           role-duration-seconds: 1800
           role-skip-session-tagging: true
           role-to-assume: arn:aws:iam::552193173995:role/GitHubActionRole
-          role-session-name: role-session
       - id: Publish
         name: Publish Assets-FileAsset4
         run: /bin/bash ./cdk.out/publish-Assets-FileAsset4-step.sh
@@ -159,15 +155,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Authenticate Via OIDC Role
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-region: eu-west-1
           role-duration-seconds: 1800
           role-skip-session-tagging: true
           role-to-assume: arn:aws:iam::552193173995:role/GitHubActionRole
-          role-session-name: role-session
       - name: Assume CDK Deploy Role
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@v1-node16
         with:
           aws-region: eu-west-1
           role-duration-seconds: 1800

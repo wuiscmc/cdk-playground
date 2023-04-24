@@ -27,7 +27,7 @@ class MyStage extends cdk.Stage {
 }
 
 const pipeline = new GitHubWorkflow(app, 'Pipeline', {
-  // publishAssetsAuthRegion: 'eu-west-1',
+  publishAssetsAuthRegion: 'eu-west-1',
   synth: new ShellStep('Build', {    
     commands: [
       'npm install',
