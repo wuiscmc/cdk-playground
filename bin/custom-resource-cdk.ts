@@ -8,7 +8,6 @@ import * as ghPipelines from 'cdk-pipelines-github';
 import { ShellStep } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 import * as iam from 'aws-cdk-lib/aws-iam';
-
 const app = new cdk.App();
 
 // 1. Stackset living in the management account with the OpenIdConnectProvider
@@ -58,7 +57,7 @@ const app = new cdk.App();
 // githubOIDCRole.addDependency(githubOIDCProvider); // just so we can deploy them in the same go
 
 
-class MyStage extends cdk.Stage {
+class MyStage extends Stage {
   constructor(scope: Construct, id: string, props?: cdk.StageProps) {
     super(scope, id, props);
 
