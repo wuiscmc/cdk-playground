@@ -2,21 +2,60 @@
 import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { CustomResourceCdkStack } from '../lib/custom-resource-cdk-stack';
-// import { MyGitHubActionRole } from '../lib/github-action-role-stack';
 import config from '../config.json';
-// import { AwsCredentials, GitHubWorkflow } from 'cdk-pipelines-github';
-import * as pipelines from 'aws-cdk-lib/pipelines';
+import { AwsCredentials, GitHubActionRole, GitHubWorkflow } from 'cdk-pipelines-github';
+import * as ghPipelines from 'cdk-pipelines-github';
+import { ShellStep } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
-import { Stack, StackProps, Stage } from 'aws-cdk-lib';
-
+import * as iam from 'aws-cdk-lib/aws-iam';
 const app = new cdk.App();
 
-// One needs to manually set the Provider, despite what the documentation says
-// new MyGitHubActionRole(app, 'MyGitHubActionRole', {
-//   env: {
-//     account: config['aws.deployment.accountId']
+// 1. Stackset living in the management account with the OpenIdConnectProvider
+// 2. GHAction Role in the target account (maps repo with role)
+// 3. That's it?
+
+
+// same thing CICD uses in their accounts
+// a) if the provider is not passed, then it creates one
+// b) if the provider is already in the account: GitHubActionRole.existingGitHubActionsProvider(this)
+// with option b. we can distribute the provider first and then reference it in the role
+
+// This Stack could be provided as a stackset cause its configuration is static
+// export class GithubOIDCProvider extends cdk.Stack {
+//   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+//     super(scope, id, props);
+    
+//     // with option b. we can distribute the provider first and then reference it in the role
+//     new iam.OpenIdConnectProvider(this, 'github-oidc-provider', {
+//       url: 'https://token.actions.githubusercontent.com',
+//       clientIds: ['sts.amazonaws.com']
+//     });
 //   }
-// });
+// }
+
+// // // this is the role that picks the provider and creates the OIDC role
+// export class GitHubOIDCRole extends cdk.Stack {
+//   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+//     super(scope, id, props);
+    
+//     new GitHubActionRole(this, 'github-action-role', {
+//       repos: ['wuiscmc/cdk-playground'],
+//       provider: GitHubActionRole.existingGitHubActionsProvider(this) // created in the GithubOIDCProvider stack
+//     });
+//   }
+// }
+// const props = {};
+// // const props = {
+// //   env: {
+// //     account: config['aws.deployment.accountId']
+// //   }
+// // };
+// const githubOIDCProvider = new GithubOIDCProvider(app, 'GithubOIDCProvider', props);
+// const githubOIDCRole = new GitHubOIDCRole(app, 'GitHubOIDCRole', props);
+
+
+// githubOIDCRole.addDependency(githubOIDCProvider); // just so we can deploy them in the same go
+
 
 class MyStage extends Stage {
   constructor(scope: Construct, id: string, props?: cdk.StageProps) {
@@ -26,64 +65,23 @@ class MyStage extends Stage {
   }
 }
 
-class MyPipelineStack extends Stack {
-  constructor(scope: Construct, id: string, props?: StackProps) {
-    super(scope, id, props);
-
-    const pipeline = new pipelines.CodePipeline(this, 'Pipeline', {
-      crossAccountKeys: true,
-      synth: new pipelines.ShellStep('Synth', {
-        // Use a connection created using the AWS console to authenticate to GitHub
-        // Other sources are available.
-        input: pipelines.CodePipelineSource.connection('wuiscmc/cdk-playground', 'main', {
-          connectionArn: 'arn:aws:codestar-connections:eu-north-1:552193173995:connection/ebc5a7d0-f606-436a-9467-55b84adfd416', // Created using the AWS console * });',
-        }),
-        commands: [
-          'npm ci',
-          'npm run build',
-          'npx cdk synth',
-        ],
-      }),
-    });
-
-    pipeline.addStage(
-      new MyStage(app, 'Prod', {
-        env: {
-          account: '682444753419', //sandbox, // config['aws.deployment.accountId'],
-          region: config['aws.region']
-        }
-      })
-    );
-  }
-}
-
-new MyPipelineStack(app, 'PipelineStack', {
-  env: {
-    account: config['aws.deployment.accountId'],
-    region: config['aws.region'],
-  }
+const pipeline = new GitHubWorkflow(app, 'Pipeline', {
+  publishAssetsAuthRegion: config['aws.region'],
+  synth: new ShellStep('Build', {    
+    commands: [
+      'npm install',
+      'npm run build',
+      'npx cdk synth',
+    ],
+  }),
+  awsCreds: AwsCredentials.fromOpenIdConnect({
+    gitHubActionRoleArn: `arn:aws:iam::552193173995:role/GitHubActionRole`,
+  }),
 });
 
-
-// const pipeline = new GitHubWorkflow(app, 'Pipeline', {
-//   publishAssetsAuthRegion: config['aws.region'],
-//   synth: new ShellStep('Build', {    
-//     commands: [
-//       'npm install',
-//       'npm run build',
-//       'npx cdk synth',
-//     ],
-//   }),
-//   awsCreds: AwsCredentials.fromOpenIdConnect({
-//     gitHubActionRoleArn: config['aws.github-role.arn'],
-//   }),
-// });
-
-// const prodStage = new MyStage(app, 'Prod', {
-//   env: {
-//     account: config['aws.deployment.accountId'], 
-//     region: config['aws.region']
-//   }
-// });
-
-// pipeline.addStage(prodStage);
+pipeline.addStageWithGitHubOptions(new MyStage(app, 'Prod', {  
+  env: { 
+    account: config['aws.deployment.accountId'], 
+    region: config['aws.region']
+  }
+}));
