@@ -3,11 +3,10 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { CustomResourceCdkStack } from '../lib/custom-resource-cdk-stack';
 import config from '../config.json';
-import { AwsCredentials, GitHubActionRole, GitHubWorkflow } from 'cdk-pipelines-github';
-import * as ghPipelines from 'cdk-pipelines-github';
+import { AwsCredentials, GitHubWorkflow } from 'cdk-pipelines-github';
 import { ShellStep } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
-import * as iam from 'aws-cdk-lib/aws-iam';
+
 const app = new cdk.App();
 
 // 1. Stackset living in the management account with the OpenIdConnectProvider
@@ -57,7 +56,7 @@ const app = new cdk.App();
 // githubOIDCRole.addDependency(githubOIDCProvider); // just so we can deploy them in the same go
 
 
-class MyStage extends Stage {
+class MyStage extends cdk.Stage {
   constructor(scope: Construct, id: string, props?: cdk.StageProps) {
     super(scope, id, props);
 
