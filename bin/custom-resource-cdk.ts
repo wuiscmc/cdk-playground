@@ -90,7 +90,3 @@ class MyStage extends cdk.Stage {
 // }));
 const props = {};
 new CustomResourceCdkStack(app, 'test-custom-resource', props);
-new CustomResourceCdkStack(app, 'test-custom-resource-2', props);
-new CustomResourceCdkStack(app, 'test-custom-resource-3', props);
-new CustomResourceCdkStack(app, 'test-custom-resource-4', props);
-new CustomResourceCdkStack(app, 'test-custom-resource-5', props);

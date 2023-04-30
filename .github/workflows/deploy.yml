@@ -1,27 +1,38 @@
-on: [push, workflow_dispatch]
+name: CDK Deployment
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch: {}
+
 permissions:
   id-token: write 
   contents: read 
+
 jobs:
   aws_cdk:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repo
         uses: actions/checkout@v3
+
       - uses: actions/setup-node@v2
         with:
-          node-version: "14"
+          node-version: "16"
           
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: eu-west-1
-          role-duration-seconds: 1800
-          role-skip-session-tagging: true
+          role-duration-seconds: 300
           role-to-assume: arn:aws:iam::552193173995:role/OtherRepoGithubRole
+
       - name: Install dependencies
         run: npm install
+
       - name: Synth stack
         run: npx cdk synth
+
       - name: Deploy stack
         run: npx cdk deploy --all --require-approval never
