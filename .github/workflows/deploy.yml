@@ -1,5 +1,7 @@
 on: [push, workflow_dispatch]
-
+permissions:
+  id-token: write 
+  contents: read 
 jobs:
   aws_cdk:
     runs-on: ubuntu-latest
@@ -11,7 +13,7 @@ jobs:
           node-version: "14"
           
       - name: Configure aws credentials
-        uses: aws-actions/configure-aws-credentials@v1-node16
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: eu-west-1
           role-duration-seconds: 1800
