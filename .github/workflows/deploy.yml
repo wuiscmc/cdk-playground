@@ -13,8 +13,9 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-region: eu-west-1
+          role-duration-seconds: 1800
+          role-skip-session-tagging: true
           role-to-assume: arn:aws:iam::552193173995:role/OtherRepoGithubRole
-          role-session-name: samplerolesession
       - name: Install dependencies
         run: npm install
       - name: Synth stack
