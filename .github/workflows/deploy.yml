@@ -53,7 +53,7 @@ jobs:
           aws-region: eu-west-1
           role-duration-seconds: 1800
           role-skip-session-tagging: true
-          role-to-assume: arn:aws:iam::552193173995:role/GithubActionRole
+          role-to-assume: arn:aws:iam::552193173995:role/OtherRepoGithubRole
       - id: Publish
         name: Publish Assets-FileAsset1
         run: /bin/bash ./cdk.out/publish-Assets-FileAsset1-step.sh
@@ -81,7 +81,7 @@ jobs:
           aws-region: eu-west-1
           role-duration-seconds: 1800
           role-skip-session-tagging: true
-          role-to-assume: arn:aws:iam::552193173995:role/GithubActionRole
+          role-to-assume: arn:aws:iam::552193173995:role/OtherRepoGithubRole
       - id: Publish
         name: Publish Assets-FileAsset2
         run: /bin/bash ./cdk.out/publish-Assets-FileAsset2-step.sh
@@ -109,7 +109,7 @@ jobs:
           aws-region: eu-west-1
           role-duration-seconds: 1800
           role-skip-session-tagging: true
-          role-to-assume: arn:aws:iam::552193173995:role/GithubActionRole
+          role-to-assume: arn:aws:iam::552193173995:role/OtherRepoGithubRole
       - id: Publish
         name: Publish Assets-FileAsset3
         run: /bin/bash ./cdk.out/publish-Assets-FileAsset3-step.sh
@@ -137,7 +137,7 @@ jobs:
           aws-region: eu-west-1
           role-duration-seconds: 1800
           role-skip-session-tagging: true
-          role-to-assume: arn:aws:iam::552193173995:role/GithubActionRole
+          role-to-assume: arn:aws:iam::552193173995:role/OtherRepoGithubRole
       - id: Publish
         name: Publish Assets-FileAsset4
         run: /bin/bash ./cdk.out/publish-Assets-FileAsset4-step.sh
@@ -160,7 +160,7 @@ jobs:
           aws-region: eu-west-1
           role-duration-seconds: 1800
           role-skip-session-tagging: true
-          role-to-assume: arn:aws:iam::552193173995:role/GithubActionRole
+          role-to-assume: arn:aws:iam::552193173995:role/OtherRepoGithubRole
       - name: Assume CDK Deploy Role
         uses: aws-actions/configure-aws-credentials@v1-node16
         with:
