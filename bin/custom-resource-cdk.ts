@@ -3,7 +3,7 @@ import 'source-map-support/register';
 import * as cdk from 'aws-cdk-lib';
 import { CustomResourceCdkStack } from '../lib/custom-resource-cdk-stack';
 import config from '../config.json';
-import { AwsCredentials, GitHubWorkflow } from 'cdk-pipelines-github';
+// import { AwsCredentials, GitHubWorkflow } from 'cdk-pipelines-github';
 import { ShellStep } from 'aws-cdk-lib/pipelines';
 import { Construct } from 'constructs';
 
@@ -61,26 +61,36 @@ class MyStage extends cdk.Stage {
     super(scope, id, props);
 
     new CustomResourceCdkStack(this, 'test-custom-resource', props);
+    new CustomResourceCdkStack(this, 'test-custom-resource-2', props);
+    new CustomResourceCdkStack(this, 'test-custom-resource-3', props);
+    new CustomResourceCdkStack(this, 'test-custom-resource-4', props);
+    new CustomResourceCdkStack(this, 'test-custom-resource-5', props);
   }
 }
 
-const pipeline = new GitHubWorkflow(app, 'Pipeline', {
-  publishAssetsAuthRegion: config['aws.region'],
-  synth: new ShellStep('Build', {    
-    commands: [
-      'npm install',
-      'npm run build',
-      'npx cdk synth',
-    ],
-  }),
-  awsCreds: AwsCredentials.fromOpenIdConnect({
-    gitHubActionRoleArn: `arn:aws:iam::552193173995:role/OtherRepoGithubRole`,
-  }),
-});
+// const pipeline = new GitHubWorkflow(app, 'Pipeline', {
+//   publishAssetsAuthRegion: config['aws.region'],
+//   synth: new ShellStep('Build', {    
+//     commands: [
+//       'npm install',
+//       'npm run build',
+//       'npx cdk synth',
+//     ],
+//   }),
+//   awsCreds: AwsCredentials.fromOpenIdConnect({
+//     gitHubActionRoleArn: `arn:aws:iam::552193173995:role/OtherRepoGithubRole`,
+//   }),
+// });
 
-pipeline.addStageWithGitHubOptions(new MyStage(app, 'Prod', {  
-  env: { 
-    account: config['aws.deployment.accountId'], 
-    region: config['aws.region']
-  }
-}));
+// pipeline.addStageWithGitHubOptions(new MyStage(app, 'Prod', {  
+//   env: { 
+//     account: config['aws.deployment.accountId'], 
+//     region: config['aws.region']
+//   }
+// }));
+const props = {};
+new CustomResourceCdkStack(app, 'test-custom-resource', props);
+new CustomResourceCdkStack(app, 'test-custom-resource-2', props);
+new CustomResourceCdkStack(app, 'test-custom-resource-3', props);
+new CustomResourceCdkStack(app, 'test-custom-resource-4', props);
+new CustomResourceCdkStack(app, 'test-custom-resource-5', props);
