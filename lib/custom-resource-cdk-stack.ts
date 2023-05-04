@@ -16,7 +16,7 @@ export class CustomResourceCdkStack extends cdk.Stack {
       logRetention: logs.RetentionDays.ONE_DAY,
     });
 
-    const myProvider = new customResources.Provider(this, 'MyProvider', {
+    const myProvider = new customResources.Provider(this, 'MyProvider2', {
       onEventHandler: lambdaFn,
     });
 
