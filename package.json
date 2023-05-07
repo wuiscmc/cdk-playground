@@ -1,6 +1,6 @@
 {
   "name": "custom-resource-cdk",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "bin": {
     "custom-resource-cdk": "bin/custom-resource-cdk.js"
   },
