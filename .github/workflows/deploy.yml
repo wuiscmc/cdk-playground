@@ -1,10 +1,14 @@
 name: CDK Deployment
 
 on:
-#  push:
-#    branches:
-#      - main
-  workflow_dispatch: {}
+  workflow_call:
+    inputs:
+      role-to-assume:
+        required: true
+        type: string
+      aws-region:
+        required: true
+        type: string
 
 permissions:
   id-token: write 
@@ -24,9 +28,9 @@ jobs:
       - name: Configure aws credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
-          aws-region: eu-west-1
+          aws-region: ${{ inputs.aws-region }}
           role-duration-seconds: 900
-          role-to-assume: arn:aws:iam::552193173995:role/OtherRepoGithubRole
+          role-to-assume: ${{ inputs.role-to-assume }}
 
       - name: Install dependencies
         run: npm install
