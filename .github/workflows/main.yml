@@ -1,0 +1,19 @@
+name: main flow
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  deploy-dev:
+    uses: wuiscmc/cdk-playground/.github/workflows/deploy.yml@main
+    with:
+      aws-region: eu-north-1
+      role-to-assume: arn:aws:iam::552193173995:role/OtherRepoGithubRole
+      
+#  deploy-prod:
+#    uses: wuiscmc/cdk-playground/.github/workflows/deploy.yml@main
+#    with:
+#      aws-region: eu-north-1
+#      role-to-assume: arn:aws:iam::552193173995:role/OtherRepoGithubRole
